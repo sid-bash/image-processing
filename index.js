@@ -1,19 +1,19 @@
 const express = require("express");
-require('./services/database');
+const path = require('path');
+require('./app/database/dbConnection');
 
 const app = express();
 const port = 3000;
 
 app.use(express.json());
 
-// Load routes
-const uploadRoutes = require("./routes/upload");
-const statusRoutes = require("./routes/status");
-const webhookRoutes = require("./routes/webhook");
+// Static hosting
+app.use('/outputs', express.static(path.join(__dirname, 'outputs')));
+app.use('/compressed_images', express.static(path.join(__dirname, 'compressed_images')));
 
-app.use("/api/upload", uploadRoutes);
-app.use("/api/status", statusRoutes);
-app.use("/api/webhook", webhookRoutes);
+// Load routes
+const routes = require("./app/routes/routes");
+app.use("/api", routes);
 
 app.listen(port, () => {
   console.log(`Server running at http://localhost:${port}`);
